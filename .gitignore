@@ -1,0 +1,7 @@
+# Compiled class files
+*.class
+
+# Generated data files
+expenses.txt
+budgets.txt
+expenses_export.csv
