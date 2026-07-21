@@ -8,6 +8,7 @@ A menu-driven Java console app for tracking personal expenses — built as a sol
 - Update and delete existing expenses.
 - View all expenses.
 - View a summary of all expenses, or for a specific month.
+- Filter expenses by category and see the category total.
 - Expenses persist to a file (`expenses.txt`) between runs; descriptions with
   commas are quoted so the save file round-trips safely.
 
