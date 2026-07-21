@@ -1,68 +1,43 @@
-# Project  Url
-https://roadmap.sh/projects/expense-tracker
-
-```markdown
 # Expense Tracker
 
-## Overview
-The Expense Tracker is a Java application designed to help users manage their expenses. It allows users to add, update, delete, and view expenses, as well as view summaries of expenses for specific months.
+A menu-driven Java console app for tracking personal expenses — built as a solution to the [roadmap.sh Expense Tracker project](https://roadmap.sh/projects/expense-tracker).
 
 ## Features
+
 - Add new expenses with date, description, amount, and category.
-- Update existing expenses.
-- Delete expenses.
+- Update and delete existing expenses.
 - View all expenses.
-- View a summary of all expenses.
-- View a summary of expenses for a specific month.
-- Save and load expenses from a file.
+- View a summary of all expenses, or for a specific month.
+- Expenses persist to a file (`expenses.txt`) between runs.
 
-## Project Structure
+Planned extensions from the roadmap.sh spec are tracked as [good first issues](https://github.com/chaudhary-lakshay/Expense-Tracker/issues) — contributions welcome.
+
+## Project structure
+
 ```
-Expense_Tracker/
-├── Expense.java
-├── ExpenseStorage.java
-└── ExpenseTracker.java
+src/Expense_Tracker/
+├── Expense.java          # expense model: date, description, amount, category
+├── ExpenseStorage.java   # saves/loads expenses to expenses.txt
+└── ExpenseTracker.java   # main class, menu loop, all commands
 ```
 
-## Classes
+## Run it
 
-### Expense
-Represents an individual expense with the following attributes:
-- `date`: The date of the expense.
-- `description`: A brief description of the expense.
-- `amount`: The amount spent.
-- `category`: The category of the expense.
+```bash
+git clone https://github.com/chaudhary-lakshay/Expense-Tracker.git
+cd Expense-Tracker/src
+javac Expense_Tracker/*.java
+java Expense_Tracker.ExpenseTracker
+```
 
-### ExpenseStorage
-Handles saving and loading expenses to and from a file.
-- `saveExpenses(ArrayList<Expense> expenses)`: Saves the list of expenses to a file.
-- `loadExpenses()`: Loads the list of expenses from a file.
+Requires JDK 8+.
 
-### ExpenseTracker
-The main class that provides a menu-driven interface for managing expenses.
-- `main(String[] args)`: The entry point of the application.
-- `addExpense(Scanner scanner, ArrayList<Expense> expenses)`: Adds a new expense.
-- `updateExpense(Scanner scanner, ArrayList<Expense> expenses)`: Updates an existing expense.
-- `deleteExpense(Scanner scanner, ArrayList<Expense> expenses)`: Deletes an expense.
-- `viewAllExpenses(ArrayList<Expense> expenses)`: Displays all expenses.
-- `viewSummary(ArrayList<Expense> expenses)`: Displays a summary of all expenses.
-- `viewMonthlySummary(Scanner scanner, ArrayList<Expense> expenses)`: Displays a summary of expenses for a specific month.
+## More of my work
 
-## Usage
-1. Compile the Java files:
-   ```bash
-   javac Expense_Tracker/*.java
-   ```
-2. Run the application:
-   ```bash
-   java Expense_Tracker.ExpenseTracker
-   ```
-
-## Dependencies
-- Java Development Kit (JDK) 8 or higher.
+- [Password-Manager](https://github.com/chaudhary-lakshay/Password-Manager) — annotated teaching example of the Java AES API (and how NOT to do crypto)
+- [CineTicket](https://github.com/chaudhary-lakshay/CineTicket) — Spring Boot movie ticketing platform: JWT auth, Stripe payments, PDF tickets, email
+- [VitaLink](https://github.com/chaudhary-lakshay/vitalink) — remote patient monitoring backend: HL7 ADT, MQTT ingest, live ECG streaming
 
 ## License
-This project is licensed under the MIT License.
 
-## Author
-- [lakshay1341]
+MIT
