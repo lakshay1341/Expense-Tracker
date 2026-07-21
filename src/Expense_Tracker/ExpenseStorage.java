@@ -6,6 +6,7 @@ import java.util.List;
 
 public class ExpenseStorage {
     private static final String FILENAME = "expenses.txt";
+    public static final String EXPORT_FILENAME = "expenses_export.csv";
 
     public static void saveExpenses(ArrayList<Expense> expenses) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILENAME))) {
@@ -44,5 +45,25 @@ public class ExpenseStorage {
             System.out.println("Error loading expenses: " + e.getMessage());
         }
         return expenses;
+    }
+
+    /**
+     * Exports all expenses to {@link #EXPORT_FILENAME} with a header row,
+     * reusing {@link CsvUtil} so commas in descriptions are quoted (issue #4).
+     *
+     * @return true on success, false if writing failed.
+     */
+    public static boolean exportToCsv(ArrayList<Expense> expenses) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(EXPORT_FILENAME))) {
+            writer.println("date,description,amount,category");
+            for (Expense e : expenses) {
+                writer.println(CsvUtil.toLine(e.getDate(), e.getDescription(),
+                        String.valueOf(e.getAmount()), e.getCategory()));
+            }
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error exporting expenses: " + e.getMessage());
+            return false;
+        }
     }
 }
