@@ -1,12 +1,14 @@
 package Expense_Tracker;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ExpenseTracker {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Expense> expenses = ExpenseStorage.loadExpenses();
+        Map<String, Double> budgets = BudgetStorage.loadBudgets();
 
         while (true) {
             System.out.println("\nExpense Tracker Menu:");
@@ -17,14 +19,15 @@ public class ExpenseTracker {
             System.out.println("5. View Summary of All Expenses");
             System.out.println("6. View Summary of Expenses for a Specific Month");
             System.out.println("7. Filter Expenses by Category");
-            System.out.println("8. Exit");
+            System.out.println("8. Set/View Monthly Budget");
+            System.out.println("9. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
             switch (choice) {
                 case 1:
-                    addExpense(scanner, expenses);
+                    addExpense(scanner, expenses, budgets);
                     break;
                 case 2:
                     updateExpense(scanner, expenses);
@@ -45,6 +48,9 @@ public class ExpenseTracker {
                     filterByCategory(scanner, expenses);
                     break;
                 case 8:
+                    manageBudget(scanner, expenses, budgets);
+                    break;
+                case 9:
                     ExpenseStorage.saveExpenses(expenses);
                     System.out.println("Expenses saved. Exiting...");
                     return;
@@ -54,7 +60,8 @@ public class ExpenseTracker {
         }
     }
 
-    private static void addExpense(Scanner scanner, ArrayList<Expense> expenses) {
+    private static void addExpense(Scanner scanner, ArrayList<Expense> expenses,
+                                   Map<String, Double> budgets) {
         System.out.print("Enter date (YYYY-MM-DD): ");
         String date = scanner.nextLine();
         System.out.print("Enter description: ");
@@ -66,6 +73,7 @@ public class ExpenseTracker {
         String category = scanner.nextLine();
         expenses.add(new Expense(date, description, amount, category));
         System.out.println("Expense added.");
+        warnIfOverBudget(expenses, budgets, monthKey(date));
     }
 
     private static void updateExpense(Scanner scanner, ArrayList<Expense> expenses) {
@@ -146,6 +154,71 @@ public class ExpenseTracker {
         } else {
             System.out.printf("Total for category '%s': %.2f%n", category, total);
         }
+    }
+
+    /** Sets and/or views the budget for a month, then reports spend (issue #3). */
+    private static void manageBudget(Scanner scanner, ArrayList<Expense> expenses,
+                                     Map<String, Double> budgets) {
+        System.out.print("Enter month (YYYY-MM): ");
+        String month = scanner.nextLine().trim();
+        System.out.print("Enter budget amount (leave blank to just view): ");
+        String input = scanner.nextLine().trim();
+        if (!input.isEmpty()) {
+            try {
+                double amount = Double.parseDouble(input);
+                budgets.put(month, amount);
+                BudgetStorage.saveBudgets(budgets);
+                System.out.println("Budget for " + month + " set to " + amount);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid amount.");
+                return;
+            }
+        }
+
+        double spent = monthTotal(expenses, month);
+        if (budgets.containsKey(month)) {
+            double budget = budgets.get(month);
+            System.out.printf("Budget for %s: %.2f | Spent: %.2f | Remaining: %.2f%n",
+                    month, budget, spent, budget - spent);
+            if (spent > budget) {
+                System.out.println("You are over budget!");
+            }
+        } else {
+            System.out.printf("No budget set for %s. Spent so far: %.2f%n", month, spent);
+        }
+    }
+
+    /** Warns if the given month's total has exceeded its budget (issue #3). */
+    private static void warnIfOverBudget(ArrayList<Expense> expenses,
+                                         Map<String, Double> budgets, String month) {
+        if (month == null || !budgets.containsKey(month)) {
+            return;
+        }
+        double total = monthTotal(expenses, month);
+        double budget = budgets.get(month);
+        if (total > budget) {
+            System.out.printf("Warning: expenses for %s total %.2f, exceeding the budget of %.2f.%n",
+                    month, total, budget);
+        }
+    }
+
+    /** Sums expenses whose date falls in the given YYYY-MM month. */
+    private static double monthTotal(ArrayList<Expense> expenses, String month) {
+        double total = 0;
+        for (Expense e : expenses) {
+            if (month.equals(monthKey(e.getDate()))) {
+                total += e.getAmount();
+            }
+        }
+        return total;
+    }
+
+    /** Extracts the YYYY-MM month key from a YYYY-MM-DD date string. */
+    private static String monthKey(String date) {
+        if (date != null && date.length() >= 7) {
+            return date.substring(0, 7);
+        }
+        return date;
     }
 }
 
