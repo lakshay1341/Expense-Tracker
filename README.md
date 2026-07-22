@@ -11,6 +11,8 @@ A menu-driven Java console app for tracking personal expenses — built as a sol
 - Filter expenses by category and see the category total.
 - Set a monthly budget and get warned when a month's spend goes over it
   (budgets persist to `budgets.txt`).
+- Export all expenses to a CSV file (`expenses_export.csv`), with fields quoted
+  so commas in descriptions don't break the file.
 - Expenses persist to a file (`expenses.txt`) between runs; descriptions with
   commas are quoted so the save file round-trips safely.
 

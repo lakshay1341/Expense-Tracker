@@ -20,7 +20,8 @@ public class ExpenseTracker {
             System.out.println("6. View Summary of Expenses for a Specific Month");
             System.out.println("7. Filter Expenses by Category");
             System.out.println("8. Set/View Monthly Budget");
-            System.out.println("9. Exit");
+            System.out.println("9. Export Expenses to CSV");
+            System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
@@ -51,6 +52,9 @@ public class ExpenseTracker {
                     manageBudget(scanner, expenses, budgets);
                     break;
                 case 9:
+                    exportCsv(expenses);
+                    break;
+                case 10:
                     ExpenseStorage.saveExpenses(expenses);
                     System.out.println("Expenses saved. Exiting...");
                     return;
@@ -219,6 +223,13 @@ public class ExpenseTracker {
             return date.substring(0, 7);
         }
         return date;
+    }
+
+    /** Writes all expenses to a CSV file (issue #4). */
+    private static void exportCsv(ArrayList<Expense> expenses) {
+        if (ExpenseStorage.exportToCsv(expenses)) {
+            System.out.println("Expenses exported to " + ExpenseStorage.EXPORT_FILENAME);
+        }
     }
 }
 
