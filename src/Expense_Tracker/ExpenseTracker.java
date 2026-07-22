@@ -16,7 +16,8 @@ public class ExpenseTracker {
             System.out.println("4. View All Expenses");
             System.out.println("5. View Summary of All Expenses");
             System.out.println("6. View Summary of Expenses for a Specific Month");
-            System.out.println("7. Exit");
+            System.out.println("7. Filter Expenses by Category");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
@@ -41,6 +42,9 @@ public class ExpenseTracker {
                     viewMonthlySummary(scanner, expenses);
                     break;
                 case 7:
+                    filterByCategory(scanner, expenses);
+                    break;
+                case 8:
                     ExpenseStorage.saveExpenses(expenses);
                     System.out.println("Expenses saved. Exiting...");
                     return;
@@ -121,6 +125,27 @@ public class ExpenseTracker {
             }
         }
         System.out.println("Total expenses for month " + month + ": " + total);
+    }
+
+    /** Lists expenses in a chosen category with their running total (issue #2). */
+    private static void filterByCategory(Scanner scanner, ArrayList<Expense> expenses) {
+        System.out.print("Enter category to filter by: ");
+        String category = scanner.nextLine().trim();
+        double total = 0;
+        boolean found = false;
+        for (int i = 0; i < expenses.size(); i++) {
+            Expense e = expenses.get(i);
+            if (e.getCategory() != null && e.getCategory().equalsIgnoreCase(category)) {
+                System.out.println(i + ": " + e);
+                total += e.getAmount();
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No expenses found in category '" + category + "'.");
+        } else {
+            System.out.printf("Total for category '%s': %.2f%n", category, total);
+        }
     }
 }
 
