@@ -36,7 +36,7 @@ public class ExpenseTracker {
                     addExpense(scanner, expenses, budgets);
                     break;
                 case 2:
-                    updateExpense(scanner, expenses);
+                    updateExpense(scanner, expenses, budgets);
                     break;
                 case 3:
                     deleteExpense(scanner, expenses);
@@ -85,11 +85,13 @@ public class ExpenseTracker {
         warnIfOverBudget(expenses, budgets, monthKey(date));
     }
 
-    private static void updateExpense(Scanner scanner, ArrayList<Expense> expenses) {
+    private static void updateExpense(Scanner scanner, ArrayList<Expense> expenses,
+                                      Map<String, Double> budgets) {
         System.out.print("Enter the index of the expense to update: ");
         int index = scanner.nextInt();
         scanner.nextLine(); // Consume newline
         if (index >= 0 && index < expenses.size()) {
+            String oldMonth = monthKey(expenses.get(index).getDate());
             System.out.print("Enter new date (YYYY-MM-DD): ");
             String date = scanner.nextLine();
             System.out.print("Enter new description: ");
@@ -101,6 +103,13 @@ public class ExpenseTracker {
             String category = scanner.nextLine();
             expenses.set(index, new Expense(date, description, amount, category));
             System.out.println("Expense updated.");
+            // An update can change the amount or move the expense to another
+            // month, so re-check both the new month and the one it left.
+            String newMonth = monthKey(date);
+            warnIfOverBudget(expenses, budgets, newMonth);
+            if (oldMonth != null && !oldMonth.equals(newMonth)) {
+                warnIfOverBudget(expenses, budgets, oldMonth);
+            }
         } else {
             System.out.println("Invalid index.");
         }
