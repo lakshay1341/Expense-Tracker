@@ -76,8 +76,13 @@ public class ExpenseTracker {
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
         System.out.print("Enter amount: ");
-        double amount = scanner.nextDouble();
-        scanner.nextLine(); // Consume newline
+        double amount;
+        try {
+            amount = Double.parseDouble(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid amount. Expense not added.");
+            return;
+        }
         System.out.print("Enter category: ");
         String category = scanner.nextLine();
         expenses.add(new Expense(date, description, amount, category));
@@ -88,8 +93,13 @@ public class ExpenseTracker {
     private static void updateExpense(Scanner scanner, ArrayList<Expense> expenses,
                                       Map<String, Double> budgets) {
         System.out.print("Enter the index of the expense to update: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        int index;
+        try {
+            index = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid index.");
+            return;
+        }
         if (index >= 0 && index < expenses.size()) {
             String oldMonth = monthKey(expenses.get(index).getDate());
             System.out.print("Enter new date (YYYY-MM-DD): ");
@@ -97,8 +107,13 @@ public class ExpenseTracker {
             System.out.print("Enter new description: ");
             String description = scanner.nextLine();
             System.out.print("Enter new amount: ");
-            double amount = scanner.nextDouble();
-            scanner.nextLine(); // Consume newline
+            double amount;
+            try {
+                amount = Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid amount. Expense not updated.");
+                return;
+            }
             System.out.print("Enter new category: ");
             String category = scanner.nextLine();
             expenses.set(index, new Expense(date, description, amount, category));
@@ -117,8 +132,13 @@ public class ExpenseTracker {
 
     private static void deleteExpense(Scanner scanner, ArrayList<Expense> expenses) {
         System.out.print("Enter the index of the expense to delete: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        int index;
+        try {
+            index = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid index.");
+            return;
+        }
         if (index >= 0 && index < expenses.size()) {
             expenses.remove(index);
             System.out.println("Expense deleted.");
