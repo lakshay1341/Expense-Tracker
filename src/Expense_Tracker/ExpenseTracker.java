@@ -12,6 +12,7 @@ public class ExpenseTracker {
 
         while (true) {
             System.out.println("\nExpense Tracker Menu:");
+            System.out.println("0. Exit");
             System.out.println("1. Add Expense");
             System.out.println("2. Update Expense");
             System.out.println("3. Delete Expense");
@@ -21,7 +22,6 @@ public class ExpenseTracker {
             System.out.println("7. Filter Expenses by Category");
             System.out.println("8. Set/View Monthly Budget");
             System.out.println("9. Export Expenses to CSV");
-            System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
             int choice;
             try {
@@ -32,6 +32,10 @@ public class ExpenseTracker {
             }
 
             switch (choice) {
+                case 0:
+                    ExpenseStorage.saveExpenses(expenses);
+                    System.out.println("Expenses saved. Exiting...");
+                    return;
                 case 1:
                     addExpense(scanner, expenses, budgets);
                     break;
@@ -59,10 +63,6 @@ public class ExpenseTracker {
                 case 9:
                     exportCsv(expenses);
                     break;
-                case 10:
-                    ExpenseStorage.saveExpenses(expenses);
-                    System.out.println("Expenses saved. Exiting...");
-                    return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
