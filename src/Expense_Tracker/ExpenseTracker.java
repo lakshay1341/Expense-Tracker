@@ -23,8 +23,13 @@ public class ExpenseTracker {
             System.out.println("9. Export Expenses to CSV");
             System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a number from the menu.");
+                continue;
+            }
 
             switch (choice) {
                 case 1:
