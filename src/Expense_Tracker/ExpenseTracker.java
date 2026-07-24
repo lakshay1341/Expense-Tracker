@@ -162,15 +162,15 @@ public class ExpenseTracker {
     }
 
     private static void viewMonthlySummary(Scanner scanner, ArrayList<Expense> expenses) {
-        System.out.print("Enter month (MM): ");
-        String month = scanner.nextLine();
+        System.out.print("Enter month (YYYY-MM): ");
+        String month = scanner.nextLine().trim();
         double total = 0;
         for (Expense e : expenses) {
-            if (e.getDate().substring(5, 7).equals(month)) {
+            if (month.equals(monthKey(e.getDate()))) {
                 total += e.getAmount();
             }
         }
-        System.out.println("Total expenses for month " + month + ": " + total);
+        System.out.printf("Total for %s: %.2f%n", month, total);
     }
 
     /** Lists expenses in a chosen category with their running total (issue #2). */
