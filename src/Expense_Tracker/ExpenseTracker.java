@@ -1,5 +1,8 @@
 package Expense_Tracker;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -71,8 +74,7 @@ public class ExpenseTracker {
 
     private static void addExpense(Scanner scanner, ArrayList<Expense> expenses,
                                    Map<String, Double> budgets) {
-        System.out.print("Enter date (YYYY-MM-DD): ");
-        String date = scanner.nextLine();
+        String date = readValidDate(scanner, "Enter date (YYYY-MM-DD): ");
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
         System.out.print("Enter amount: ");
@@ -102,8 +104,7 @@ public class ExpenseTracker {
         }
         if (index >= 0 && index < expenses.size()) {
             String oldMonth = monthKey(expenses.get(index).getDate());
-            System.out.print("Enter new date (YYYY-MM-DD): ");
-            String date = scanner.nextLine();
+            String date = readValidDate(scanner, "Enter new date (YYYY-MM-DD): ");
             System.out.print("Enter new description: ");
             String description = scanner.nextLine();
             System.out.print("Enter new amount: ");
@@ -118,8 +119,7 @@ public class ExpenseTracker {
             String category = scanner.nextLine();
             expenses.set(index, new Expense(date, description, amount, category));
             System.out.println("Expense updated.");
-            // An update can change the amount or move the expense to another
-            // month, so re-check both the new month and the one it left.
+            
             String newMonth = monthKey(date);
             warnIfOverBudget(expenses, budgets, newMonth);
             if (oldMonth != null && !oldMonth.equals(newMonth)) {
@@ -162,8 +162,7 @@ public class ExpenseTracker {
     }
 
     private static void viewMonthlySummary(Scanner scanner, ArrayList<Expense> expenses) {
-        System.out.print("Enter month (YYYY-MM): ");
-        String month = scanner.nextLine().trim();
+        String month = readValidMonth(scanner, "Enter month (YYYY-MM): ");
         double total = 0;
         for (Expense e : expenses) {
             if (month.equals(monthKey(e.getDate()))) {
@@ -173,7 +172,6 @@ public class ExpenseTracker {
         System.out.printf("Total for %s: %.2f%n", month, total);
     }
 
-    /** Lists expenses in a chosen category with their running total (issue #2). */
     private static void filterByCategory(Scanner scanner, ArrayList<Expense> expenses) {
         System.out.print("Enter category to filter by: ");
         String category = scanner.nextLine().trim();
@@ -194,11 +192,9 @@ public class ExpenseTracker {
         }
     }
 
-    /** Sets and/or views the budget for a month, then reports spend (issue #3). */
     private static void manageBudget(Scanner scanner, ArrayList<Expense> expenses,
                                      Map<String, Double> budgets) {
-        System.out.print("Enter month (YYYY-MM): ");
-        String month = scanner.nextLine().trim();
+        String month = readValidMonth(scanner, "Enter month (YYYY-MM): ");
         System.out.print("Enter budget amount (leave blank to just view): ");
         String input = scanner.nextLine().trim();
         if (!input.isEmpty()) {
@@ -226,7 +222,6 @@ public class ExpenseTracker {
         }
     }
 
-    /** Warns if the given month's total has exceeded its budget (issue #3). */
     private static void warnIfOverBudget(ArrayList<Expense> expenses,
                                          Map<String, Double> budgets, String month) {
         if (month == null || !budgets.containsKey(month)) {
@@ -240,7 +235,6 @@ public class ExpenseTracker {
         }
     }
 
-    /** Sums expenses whose date falls in the given YYYY-MM month. */
     private static double monthTotal(ArrayList<Expense> expenses, String month) {
         double total = 0;
         for (Expense e : expenses) {
@@ -251,7 +245,6 @@ public class ExpenseTracker {
         return total;
     }
 
-    /** Extracts the YYYY-MM month key from a YYYY-MM-DD date string. */
     private static String monthKey(String date) {
         if (date != null && date.length() >= 7) {
             return date.substring(0, 7);
@@ -259,11 +252,35 @@ public class ExpenseTracker {
         return date;
     }
 
-    /** Writes all expenses to a CSV file (issue #4). */
     private static void exportCsv(ArrayList<Expense> expenses) {
         if (ExpenseStorage.exportToCsv(expenses)) {
             System.out.println("Expenses exported to " + ExpenseStorage.EXPORT_FILENAME);
         }
     }
-}
 
+    private static String readValidDate(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            try {
+                LocalDate.parse(input);
+                return input;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            }
+        }
+    }
+
+    private static String readValidMonth(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            try {
+                YearMonth.parse(input);
+                return input;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid month format. Please use YYYY-MM.");
+            }
+        }
+    }
+}
