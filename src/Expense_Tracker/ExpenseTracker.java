@@ -83,6 +83,10 @@ public class ExpenseTracker {
             System.out.println("Invalid amount. Expense not added.");
             return;
         }
+        if (amount <= 0) {
+            System.out.println("Amount must be greater than zero.");
+            return;
+        }
         System.out.print("Enter category: ");
         String category = scanner.nextLine();
         expenses.add(new Expense(date, description, amount, category));
@@ -112,6 +116,10 @@ public class ExpenseTracker {
                 amount = Double.parseDouble(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid amount. Expense not updated.");
+                return;
+            }
+            if (amount <= 0) {
+                System.out.println("Amount must be greater than zero.");
                 return;
             }
             System.out.print("Enter new category: ");
