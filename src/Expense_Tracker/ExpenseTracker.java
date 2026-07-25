@@ -166,7 +166,7 @@ public class ExpenseTracker {
         for (Expense e : expenses) {
             total += e.getAmount();
         }
-        System.out.println("Total expenses: " + total);
+        System.out.printf("Total expenses: %.2f%n", total);
     }
 
     private static void viewMonthlySummary(Scanner scanner, ArrayList<Expense> expenses) {
