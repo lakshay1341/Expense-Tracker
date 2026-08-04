@@ -75,7 +75,7 @@ public class ExpenseTracker {
     private static void addExpense(Scanner scanner, ArrayList<Expense> expenses,
                                    Map<String, Double> budgets) {
         String date = readValidDate(scanner, "Enter date (YYYY-MM-DD): ");
-        if(date== null) return;
+        if (date == null) return;
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
         System.out.print("Enter amount: ");
@@ -161,7 +161,7 @@ public class ExpenseTracker {
         for (Expense e : expenses) {
             total += e.getAmount();
         }
-        System.out.printf("Total expenses: %.2f%n", total);
+        System.out.println("Total expenses: " + total);
     }
 
     private static void viewMonthlySummary(Scanner scanner, ArrayList<Expense> expenses) {
@@ -201,6 +201,7 @@ public class ExpenseTracker {
     private static void manageBudget(Scanner scanner, ArrayList<Expense> expenses,
                                      Map<String, Double> budgets) {
         String month = readValidMonth(scanner, "Enter month (YYYY-MM): ");
+        if (month == null) return;
         System.out.print("Enter budget amount (leave blank to just view): ");
         String input = scanner.nextLine().trim();
         if (!input.isEmpty()) {
@@ -268,7 +269,7 @@ public class ExpenseTracker {
         }
     }
     
-    /** Prompts for a valid ISO month(YYYY-MM). Returns null if blank to allow cancellation. */
+    /** Prompts for a valid ISO date (YYYY-MM-DD). Returns null if blank to allow cancellation. */
     private static String readValidDate(Scanner scanner, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -282,6 +283,7 @@ public class ExpenseTracker {
             }
         }
     }
+
     /** Prompts for a valid ISO month (YYYY-MM). Returns null if blank to allow cancellation. */
     private static String readValidMonth(Scanner scanner, String prompt) {
         while (true) {
