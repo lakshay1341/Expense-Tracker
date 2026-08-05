@@ -1,5 +1,8 @@
 package Expense_Tracker;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -71,8 +74,8 @@ public class ExpenseTracker {
 
     private static void addExpense(Scanner scanner, ArrayList<Expense> expenses,
                                    Map<String, Double> budgets) {
-        System.out.print("Enter date (YYYY-MM-DD): ");
-        String date = scanner.nextLine();
+        String date = readValidDate(scanner, "Enter date (YYYY-MM-DD): ");
+        if (date == null) return;
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
         System.out.print("Enter amount: ");
@@ -106,8 +109,8 @@ public class ExpenseTracker {
         }
         if (index >= 0 && index < expenses.size()) {
             String oldMonth = monthKey(expenses.get(index).getDate());
-            System.out.print("Enter new date (YYYY-MM-DD): ");
-            String date = scanner.nextLine();
+            String date = readValidDate(scanner, "Enter new date (YYYY-MM-DD): ");
+            if(date == null) return;
             System.out.print("Enter new description: ");
             String description = scanner.nextLine();
             System.out.print("Enter new amount: ");
@@ -170,8 +173,8 @@ public class ExpenseTracker {
     }
 
     private static void viewMonthlySummary(Scanner scanner, ArrayList<Expense> expenses) {
-        System.out.print("Enter month (YYYY-MM): ");
-        String month = scanner.nextLine().trim();
+        String month = readValidMonth(scanner, "Enter month (YYYY-MM): ");
+        if(month == null) return;
         double total = 0;
         for (Expense e : expenses) {
             if (month.equals(monthKey(e.getDate()))) {
@@ -205,8 +208,8 @@ public class ExpenseTracker {
     /** Sets and/or views the budget for a month, then reports spend (issue #3). */
     private static void manageBudget(Scanner scanner, ArrayList<Expense> expenses,
                                      Map<String, Double> budgets) {
-        System.out.print("Enter month (YYYY-MM): ");
-        String month = scanner.nextLine().trim();
+        String month = readValidMonth(scanner, "Enter month (YYYY-MM): ");
+        if (month == null) return;
         System.out.print("Enter budget amount (leave blank to just view): ");
         String input = scanner.nextLine().trim();
         if (!input.isEmpty()) {
@@ -273,5 +276,34 @@ public class ExpenseTracker {
             System.out.println("Expenses exported to " + ExpenseStorage.EXPORT_FILENAME);
         }
     }
-}
+    
+    /** Prompts for a valid ISO date (YYYY-MM-DD). Returns null if blank to allow cancellation. */
+    private static String readValidDate(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if(input.isEmpty()) return null;
+            try {
+                LocalDate.parse(input);
+                return input;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            }
+        }
+    }
 
+    /** Prompts for a valid ISO month (YYYY-MM). Returns null if blank to allow cancellation. */
+    private static String readValidMonth(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if(input.isEmpty()) return null;
+            try {
+                YearMonth.parse(input);
+                return input;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid month format. Please use YYYY-MM.");
+            }
+        }
+    }
+}
