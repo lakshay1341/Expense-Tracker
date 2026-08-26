@@ -93,6 +93,7 @@ public class ExpenseTracker {
         System.out.print("Enter category: ");
         String category = scanner.nextLine();
         expenses.add(new Expense(date, description, amount, category));
+        ExpenseStorage.saveExpenses(expenses);
         System.out.println("Expense added.");
         warnIfOverBudget(expenses, budgets, monthKey(date));
     }
@@ -128,6 +129,7 @@ public class ExpenseTracker {
             System.out.print("Enter new category: ");
             String category = scanner.nextLine();
             expenses.set(index, new Expense(date, description, amount, category));
+            ExpenseStorage.saveExpenses(expenses);
             System.out.println("Expense updated.");
             // An update can change the amount or move the expense to another
             // month, so re-check both the new month and the one it left.
@@ -152,6 +154,7 @@ public class ExpenseTracker {
         }
         if (index >= 0 && index < expenses.size()) {
             expenses.remove(index);
+            ExpenseStorage.saveExpenses(expenses);
             System.out.println("Expense deleted.");
         } else {
             System.out.println("Invalid index.");
