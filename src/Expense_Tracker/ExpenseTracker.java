@@ -6,6 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class ExpenseTracker {
     public static void main(String[] args) {
@@ -25,6 +26,7 @@ public class ExpenseTracker {
             System.out.println("7. Filter Expenses by Category");
             System.out.println("8. Set/View Monthly Budget");
             System.out.println("9. Export Expenses to CSV");
+            System.out.println("10. View Summary Grouped by Category");
             System.out.print("Enter your choice: ");
             int choice;
             try {
@@ -65,6 +67,9 @@ public class ExpenseTracker {
                     break;
                 case 9:
                     exportCsv(expenses);
+                    break;
+                case 10:
+                    viewCategorySummary(expenses);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -206,6 +211,39 @@ public class ExpenseTracker {
         } else {
             System.out.printf("Total for category '%s': %.2f%n", category, total);
         }
+    }
+
+    /** Displays all expenses grouped by category with their totals and counts (issue #24). */
+    private static void viewCategorySummary(ArrayList<Expense> expenses) {
+        if (expenses.isEmpty()) {
+            System.out.println("No expenses recorded.");
+            return;
+        }
+
+        Map<String, Double> categoryTotals = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, Integer> categoryCounts = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        double grandTotal = 0;
+
+        for (Expense e : expenses) {
+            String category = e.getCategory();
+            if (category == null || category.trim().isEmpty()) {
+                category = "Uncategorized";
+            } else {
+                category = category.trim();
+            }
+
+            categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + e.getAmount());
+            categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + 1);
+            grandTotal += e.getAmount();
+        }
+
+        System.out.println("\n--- Summary by Category ---");
+        for (String cat : categoryTotals.keySet()) {
+            double total = categoryTotals.get(cat);
+            int count = categoryCounts.get(cat);
+            System.out.printf("%s: %.2f (%d expense%s)%n", cat, total, count, count == 1 ? "" : "s");
+        }
+        System.out.printf("Total expenses: %.2f%n", grandTotal);
     }
 
     /** Sets and/or views the budget for a month, then reports spend (issue #3). */
